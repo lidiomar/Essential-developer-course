@@ -15,6 +15,7 @@
 		2D503A3D2706A76000DF24ED /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D503A3C2706A76000DF24ED /* XCTestCase+MemoryLeakTracking.swift */; };
 		2DA4132226E996C300556344 /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA4132126E996C300556344 /* RemoteFeedLoader.swift */; };
 		2DA6C06D2709E36200B068D6 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA6C06C2709E36200B068D6 /* URLSessionHTTPClient.swift */; };
+		2DB7EC6627135444007D370E /* CacheFeedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB7EC6527135444007D370E /* CacheFeedUseCaseTests.swift */; };
 		2DBE109426CC9E390036CB25 /* EssentialFeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DBE108A26CC9E380036CB25 /* EssentialFeed.framework */; };
 		2DBE10A526CC9E6D0036CB25 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE10A426CC9E6D0036CB25 /* FeedItem.swift */; };
 		2DBE10A726CC9F070036CB25 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBE10A626CC9F070036CB25 /* FeedLoader.swift */; };
@@ -48,6 +49,7 @@
 		2D503A3C2706A76000DF24ED /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		2DA4132126E996C300556344 /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
 		2DA6C06C2709E36200B068D6 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
+		2DB7EC6527135444007D370E /* CacheFeedUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheFeedUseCaseTests.swift; sourceTree = "<group>"; };
 		2DBE108A26CC9E380036CB25 /* EssentialFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DBE108E26CC9E380036CB25 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2DBE109326CC9E390036CB25 /* EssentialFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,6 +125,14 @@
 			path = "Feed API";
 			sourceTree = "<group>";
 		};
+		2DB7EC6427135404007D370E /* Feed Cache */ = {
+			isa = PBXGroup;
+			children = (
+				2DB7EC6527135444007D370E /* CacheFeedUseCaseTests.swift */,
+			);
+			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
 		2DBE108026CC9E380036CB25 = {
 			isa = PBXGroup;
 			children = (
@@ -156,8 +166,9 @@
 		2DBE109726CC9E390036CB25 /* EssentialFeedTests */ = {
 			isa = PBXGroup;
 			children = (
-				2DBE109A26CC9E390036CB25 /* Info.plist */,
+				2DB7EC6427135404007D370E /* Feed Cache */,
 				2D3FE4E126F6A46D00EF6CD6 /* Feed API */,
+				2DBE109A26CC9E390036CB25 /* Info.plist */,
 			);
 			path = EssentialFeedTests;
 			sourceTree = "<group>";
@@ -332,6 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DF0BE6D26E1A6FC007EBDBE /* LoadFeedFromRemoteUseCaseTests.swift in Sources */,
+				2DB7EC6627135444007D370E /* CacheFeedUseCaseTests.swift in Sources */,
 				2DDBDCBC26F924EB000B5C03 /* URLSessionHTTPClientTests.swift in Sources */,
 				2D503A3D2706A76000DF24ED /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
@@ -569,6 +581,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = EssentialFeedTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -589,6 +602,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = EssentialFeedTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
