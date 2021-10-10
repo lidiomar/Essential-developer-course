@@ -24,9 +24,12 @@ class URLSessionHTTPClientTests: XCTestCase {
             exp.fulfill()
         }
         
-        makeSUT().get(from: url) { _ in }
+        let exp2 = expectation(description: "Wait for request completion")
+        makeSUT().get(from: url) { _ in
+            exp2.fulfill()
+        }
         
-        wait(for: [exp], timeout: 1.0)
+        wait(for: [exp, exp2], timeout: 1.0)
     }
     
     func test_getFromURL_failsOnRequestError() {
@@ -181,7 +184,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         override class func canInit(with request: URLRequest) -> Bool {
-            requestObserver?(request)
             return true
         }
         
@@ -190,17 +192,22 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         override func startLoading() {
-
+            
+            if let requestObserver = URLProtocolStub.requestObserver {
+                client?.urlProtocolDidFinishLoading(self)
+                return requestObserver(request)
+            }
+            
+            if let error = URLProtocolStub.stub?.error {
+                client?.urlProtocol(self, didFailWithError: error)
+            }
+            
             if let data = URLProtocolStub.stub?.data {
                 client?.urlProtocol(self, didLoad: data)
             }
             
             if let response = URLProtocolStub.stub?.reponse {
                 client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-            }
-            
-            if let error = URLProtocolStub.stub?.error {
-                client?.urlProtocol(self, didFailWithError: error)
             }
             
             client?.urlProtocolDidFinishLoading(self)
