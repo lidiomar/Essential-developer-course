@@ -1,3 +1,7 @@
+//
+//  Copyright © 2019 Essential Developer. All rights reserved.
+//
+
 import XCTest
 import EssentialFeed
 
@@ -12,7 +16,7 @@ class LocalFeedLoader {
     
     func save(_ items: [FeedItem]) {
         store.deleteCachedFeed { [unowned self] error in
-            if error != nil {
+            if error == nil {
                 self.store.insert(items, timestamp: self.currentDate())
             }
         }
@@ -21,6 +25,7 @@ class LocalFeedLoader {
 
 class FeedStore {
     typealias DeletionCompletion = (Error?) -> Void
+    
     var deleteCachedFeedCallCount = 0
     var insertCallCount = 0
     var insertions = [(items: [FeedItem], timestamp: Date)]()
@@ -50,14 +55,14 @@ class CacheFeedUseCaseTests: XCTestCase {
     
     func test_init_doesNotDeleteCacheUponCreation() {
         let (_, store) = makeSUT()
-        
+
         XCTAssertEqual(store.deleteCachedFeedCallCount, 0)
     }
     
     func test_save_requestsCacheDeletion() {
         let items = [uniqueItem(), uniqueItem()]
         let (sut, store) = makeSUT()
-        
+
         sut.save(items)
         
         XCTAssertEqual(store.deleteCachedFeedCallCount, 1)
@@ -116,7 +121,7 @@ class CacheFeedUseCaseTests: XCTestCase {
     }
     
     private func anyNSError() -> NSError {
-        return NSError(domain: "any error", code: 0, userInfo: nil)
+        return NSError(domain: "any error", code: 0)
     }
-}
 
+}
