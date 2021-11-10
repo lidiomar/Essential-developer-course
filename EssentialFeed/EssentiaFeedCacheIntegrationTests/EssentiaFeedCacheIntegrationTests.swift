@@ -1,32 +1,42 @@
-//
-//  EssentiaFeedCacheIntegrationTests.swift
-//  EssentiaFeedCacheIntegrationTests
-//
-//  Created by Lidiomar Fernando dos Santos Machado on 10/11/21.
-//
-
 import XCTest
+import EssentialFeed
 
 class EssentiaFeedCacheIntegrationTests: XCTestCase {
+    func test_load_deliversNoItemsOnEmptyCache() {
+        let sut = makeSUT()
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+        let exp = expectation(description: "Wait for load completion")
+        sut.load { result in
+            switch result {
+            case let .success(imageFeed):
+                XCTAssertEqual(imageFeed, [], "Expected empty feed")
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
+            case let .failure(error):
+                XCTFail("Expected successful feed result, got \(error) instead")
+            }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+            exp.fulfill()
         }
+        wait(for: [exp], timeout: 1.0)
     }
 
+    // MARK: Helpers
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> LocalFeedLoader {
+        let storeBundle = Bundle(for: CoreDataFeedStore.self)
+        let storeURL = testSpecificStoreURL()
+        let store = try! CoreDataFeedStore(storeURL: storeURL, bundle: storeBundle)
+        let sut = LocalFeedLoader(store: store, currentDate: Date.init)
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectory().appendingPathComponent("\(type(of: self)).store")
+    }
+
+    private func cachesDirectory() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+    
 }
