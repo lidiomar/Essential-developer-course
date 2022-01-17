@@ -1,11 +1,7 @@
 //
-//  FeedViewController.swift
-//  EssentialFeediOS
-//
-//  Created by Lidiomar Machado on 11/01/22.
+//  Copyright © 2019 Essential Developer. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import EssentialFeed
 
@@ -19,13 +15,12 @@ public protocol FeedImageDataLoader {
     func loadImageData(from url: URL, completion: @escaping (Result) -> Void) -> FeedImageDataLoaderTask
 }
 
-public final class FeedViewController: UITableViewController {
-    
+final public class FeedViewController: UITableViewController {
     private var feedLoader: FeedLoader?
     private var imageLoader: FeedImageDataLoader?
     private var tableModel = [FeedImage]()
     private var tasks = [IndexPath: FeedImageDataLoaderTask]()
-    
+
     public convenience init(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) {
         self.init()
         self.feedLoader = feedLoader
@@ -33,21 +28,19 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func viewDidLoad() {
+        super.viewDidLoad()
+        
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
         load()
     }
     
-    @objc func load() {
+    @objc private func load() {
         refreshControl?.beginRefreshing()
         feedLoader?.load { [weak self] result in
-            switch result {
-            case let .success(feedImage):
-                self?.tableModel = feedImage
-                self?.tableModel = (try? result.get()) ?? []
+            if let feed = try? result.get() {
+                self?.tableModel = feed
                 self?.tableView.reloadData()
-            case .failure:
-                break
             }
             self?.refreshControl?.endRefreshing()
         }
@@ -59,19 +52,22 @@ public final class FeedViewController: UITableViewController {
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellModel = tableModel[indexPath.row]
-        let feedImageCell = FeedImageCell()
-        feedImageCell.locationContainer.isHidden = (cellModel.location == nil)
-        feedImageCell.descriptionLabel.text = cellModel.description
-        feedImageCell.locationLabel.text = cellModel.location
-        feedImageCell.feedImageContainer.startShimmering()
-        tasks[indexPath] = imageLoader?.loadImageData(from: cellModel.url) { [weak feedImageCell] result in
-            feedImageCell?.feedImageContainer.stopShimmering()
+        let cell = FeedImageCell()
+        cell.locationContainer.isHidden = (cellModel.location == nil)
+        cell.locationLabel.text = cellModel.location
+        cell.descriptionLabel.text = cellModel.description
+        cell.feedImageView.image = nil
+        cell.feedImageContainer.startShimmering()
+        tasks[indexPath] = imageLoader?.loadImageData(from: cellModel.url) { [weak cell] result in
+            let data = try? result.get()
+            cell?.feedImageView.image = data.map(UIImage.init) ?? nil
+            cell?.feedImageContainer.stopShimmering()
         }
-        
-        return feedImageCell
+        return cell
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         tasks[indexPath]?.cancel()
+        tasks[indexPath] = nil
     }
 }
