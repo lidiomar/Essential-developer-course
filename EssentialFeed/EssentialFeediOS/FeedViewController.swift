@@ -31,12 +31,12 @@ public final class FeedViewController: UITableViewController {
             switch result {
             case let .success(feedImage):
                 self?.tableModel = feedImage
-                self?.refreshControl?.endRefreshing()
                 self?.tableModel = (try? result.get()) ?? []
+                self?.tableView.reloadData()
             case .failure:
                 break
             }
-            self?.tableView.reloadData()
+            self?.refreshControl?.endRefreshing()
         }
     }
     
