@@ -33,10 +33,10 @@ public final class FeedViewController: UITableViewController {
                 self?.tableModel = feedImage
                 self?.refreshControl?.endRefreshing()
                 self?.tableModel = (try? result.get()) ?? []
-                self?.tableView.reloadData()
             case .failure:
                 break
             }
+            self?.tableView.reloadData()
         }
     }
     
